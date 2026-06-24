@@ -1,4 +1,12 @@
 import sys
+import io
+
+# Evitar falhas de print() (AttributeError) em processos sem console no Windows (PyInstaller --windowed)
+if sys.stdout is None:
+    sys.stdout = io.StringIO()
+if sys.stderr is None:
+    sys.stderr = io.StringIO()
+
 # Interceptador para rodar o NSZ nativamente no mesmo executável empacotado
 if len(sys.argv) > 1 and ("NSZ_RUNNER_MODE" in sys.argv or any("multiprocessing-fork" in arg for arg in sys.argv)):
     import multiprocessing
