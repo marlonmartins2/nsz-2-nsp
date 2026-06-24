@@ -1,3 +1,11 @@
+import sys
+# Interceptador para rodar o NSZ nativamente no mesmo executável empacotado
+if len(sys.argv) > 1 and sys.argv[1] == "NSZ_RUNNER_MODE":
+    import nsz.__main__
+    # Remove "NSZ_RUNNER_MODE" da lista de argumentos
+    sys.argv.pop(1)
+    sys.exit(nsz.__main__.main())
+
 import customtkinter as ctk
 from tkinter import filedialog
 import os

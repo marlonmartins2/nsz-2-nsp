@@ -6,15 +6,8 @@ import shutil
 import keys_data
 
 def get_nsz_executable():
-    """
-    Returns the path to the nsz executable.
-    When packaged with PyInstaller, it will use the bundled executable
-    or fallback to system command.
-    """
-    if getattr(sys, 'frozen', False):
-        # In a PyInstaller bundle
-        return os.path.join(sys._MEIPASS, 'nsz.exe' if os.name == 'nt' else 'nsz')
-    return shutil.which('nsz') or 'nsz' # Using nsz from system PATH during development
+    # Remove get_nsz_executable as we use NSZ_RUNNER_MODE directly via sys.executable
+    pass
 
 def extract_keys():
     import base64
@@ -53,8 +46,8 @@ def convert_nsz_to_nsp(input_file, output_dir, progress_callback, completion_cal
         try:
             progress_callback(f"Iniciando conversão de: {os.path.basename(input_file)}")
             cmd = [
-                sys.executable, "-m", "nsz", "-D", input_file, "-o", output_dir
-            ] if not getattr(sys, 'frozen', False) else [get_nsz_executable(), "-D", input_file, "-o", output_dir]
+                sys.executable, "NSZ_RUNNER_MODE", "-D", input_file, "-o", output_dir
+            ] if getattr(sys, 'frozen', False) else [sys.executable, "-m", "nsz", "-D", input_file, "-o", output_dir]
             
             temp_keys_dir = extract_keys()
             env = os.environ.copy()
