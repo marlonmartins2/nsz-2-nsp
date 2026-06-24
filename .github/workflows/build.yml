@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: NSZ-Converter-Windows
-        path: dist/NSZ-Converter/
+        path: dist/nsz-2-nsp/
 
   build-linux:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: NSZ-Converter-Linux
-        path: NSZ-Converter-x86_64.AppImage
+        path: nsz-2-nsp.AppImage
 
   create-release:
     needs: [build-windows, build-linux]
@@ -71,7 +71,7 @@ jobs:
       - name: Zip Windows build
         run: |
           cd windows-build
-          zip -r ../NSZ-Converter-Windows.zip ./*
+          zip -r ../nsz-2-nsp.zip ./*
           cd ..
           
       - name: Download Linux Artifact
@@ -85,7 +85,7 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            NSZ-Converter-Windows.zip
-            linux-build/NSZ-Converter-x86_64.AppImage
+            nsz-2-nsp.zip
+            linux-build/nsz-2-nsp.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
