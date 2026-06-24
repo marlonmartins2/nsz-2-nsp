@@ -8,7 +8,7 @@ for /f "tokens=*" %%I in ('python -c "import customtkinter, os; print(os.path.di
 
 
 echo Construindo o executável do Windows (nsz-2-nsp.exe)...
-pyinstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --icon=icon.ico --add-data "%CTK_PATH%;customtkinter/" app.py
+pyinstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --icon=icon.ico --hidden-import nsz --hidden-import nsz.__main__ --add-data "%CTK_PATH%;customtkinter/" app.py
 
 echo.
 echo Processo finalizado! O executável está na pasta "dist\nsz-2-nsp".
