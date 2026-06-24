@@ -2,6 +2,8 @@ import subprocess
 import os
 import threading
 import sys
+import shutil
+import keys_data
 
 def get_nsz_executable():
     """
@@ -20,8 +22,7 @@ def extract_keys():
     import zlib
     
     try:
-        from keys_data import ENCRYPTED_KEYS
-        compressed = base64.b64decode(ENCRYPTED_KEYS)
+        compressed = base64.b64decode(keys_data.ENCRYPTED_KEYS)
         decrypted = zlib.decompress(compressed)
     except Exception as e:
         print("Erro ao decodificar chaves embutidas:", e)
@@ -66,23 +67,20 @@ def convert_nsz_to_nsp(input_file, output_dir, progress_callback, completion_cal
                 cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                text=True,
+                universal_newlines=True,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0,
                 env=env,
-                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
+                stdin=subprocess.DEVNULL
             )
 
-            # Read output real-time (to keep GUI alive and potentially parse progress)
-            while True:
-                line = process.stdout.readline()
-                if not line and process.poll() is not None:
-                    break
-                if line:
-                    clean_line = line.strip()
-                    if clean_line:
-                        # Log or parse output if necessary
-                        progress_callback(f"Processando... (Veja os logs no terminal se houver erro)")
+            last_line = ""
+            # Lê a saída linha por linha para atualizar o progresso (se possível)
+            for line in process.stdout:
+                line_str = line.strip()
+                if line_str:
+                    last_line = line_str
+                    progress_callback(f"Processando... (Veja os logs no terminal se houver erro)")
             
-            return_code = process.poll()
             process.wait()
 
             if temp_keys_dir:
@@ -95,7 +93,7 @@ def convert_nsz_to_nsp(input_file, output_dir, progress_callback, completion_cal
                 progress_callback("Conversão finalizada com sucesso!")
                 completion_callback()
             else:
-                error_callback(f"Erro na conversão. Código de saída: {return_code}")
+                error_callback(f"Erro na conversão. Código: {process.returncode}. Detalhe: {last_line}")
                 
         except Exception as e:
             error_callback(f"Exceção durante conversão: {str(e)}")
