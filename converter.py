@@ -17,20 +17,16 @@ def get_nsz_executable():
 def extract_keys():
     import base64
     import tempfile
+    import zlib
     
-    enc_path = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), 'assets', 'keys.enc')
-    if not os.path.exists(enc_path):
+    try:
+        from keys_data import ENCRYPTED_KEYS
+        compressed = base64.b64decode(ENCRYPTED_KEYS)
+        decrypted = zlib.decompress(compressed)
+    except Exception as e:
+        print("Erro ao decodificar chaves embutidas:", e)
         return None
-        
-    with open(enc_path, "rb") as f:
-        data = f.read()
-        
-    encrypted = base64.b64decode(data)
-    xor_key = b"nsz-converter-secret-key-123"
-    decrypted = bytearray()
-    for i in range(len(encrypted)):
-        decrypted.append(encrypted[i] ^ xor_key[i % len(xor_key)])
-        
+
     temp_dir = tempfile.mkdtemp()
     keys_dir = os.path.join(temp_dir, '.switch')
     os.makedirs(keys_dir, exist_ok=True)

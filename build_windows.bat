@@ -9,7 +9,7 @@ echo Encontrando o executável nsz...
 for /f "tokens=*" %%I in ('python -c "import shutil; print(shutil.which('nsz'))"') do set NSZ_PATH=%%I
 
 echo Construindo o executável do Windows (nsz-2-nsp.exe)...
-pyinstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --add-data "%CTK_PATH%;customtkinter/" --add-data "assets/;assets/" --add-binary "%NSZ_PATH%;." app.py
+pyinstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --icon=icon.ico --add-data "%CTK_PATH%;customtkinter/" --add-binary "%NSZ_PATH%;." app.py
 
 echo.
 echo Processo finalizado! O executável está na pasta "dist\nsz-2-nsp".

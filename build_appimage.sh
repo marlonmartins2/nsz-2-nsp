@@ -13,8 +13,8 @@ NSZ_PATH=$(python3 -c "import shutil; print(shutil.which('nsz'))")
 echo "Construindo binário com PyInstaller..."
 # Adicionamos pyinstaller local ao PATH
 export PATH=$PATH:$HOME/.local/bin
-python3 -m PyInstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" \
-    --add-data "$CTK_PATH:customtkinter/" --add-data "assets/:assets/" --add-binary "$NSZ_PATH:." app.py
+python3 -m PyInstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --icon=icon.ico \
+    --add-data "$CTK_PATH:customtkinter/" --add-binary "$NSZ_PATH:." app.py
 
 echo "Baixando appimagetool..."
 wget -qO appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
@@ -41,11 +41,16 @@ Type=Application
 Categories=Utility;
 EOF
 
-# Use a dummy icon
-touch nsz-2-nsp.AppDir/nsz-2-nsp.png
+# Copy the icon
+cp icon.png nsz-2-nsp.AppDir/nsz-2-nsp.png
 
 echo "Gerando AppImage..."
 # No WSL o FUSE pode não estar ativo, então extraímos e rodamos
-./appimagetool --appimage-extract-and-run nsz-2-nsp.AppDir nsz-2-nsp.AppImage
+./appimagetool --appimage-extract-and-run nsz-2-nsp.AppDir
+
+# O appimagetool costuma gerar com nome nsz-2-nsp-x86_64.AppImage
+if [ -f "nsz-2-nsp-x86_64.AppImage" ]; then
+    mv nsz-2-nsp-x86_64.AppImage nsz-2-nsp.AppImage
+fi
 
 echo "Sucesso! AppImage gerado: nsz-2-nsp.AppImage"
