@@ -3,8 +3,8 @@
   <p><strong>A fast, lightweight, and cross-platform desktop application for converting NSZ to NSP formats.</strong></p>
   
   <p>
-    <a href="https://github.com/duck-psycho/nsz-converter-desktop/releases/latest">
-      <img src="https://img.shields.io/github/v/release/duck-psycho/nsz-converter-desktop?style=for-the-badge&color=success" alt="Latest Release">
+    <a href="https://github.com/marlonmartins2/nsz-2-nsp/releases/latest">
+      <img src="https://img.shields.io/github/v/release/marlonmartins2/nsz-2-nsp?style=for-the-badge&color=success" alt="Latest Release">
     </a>
     <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue?style=for-the-badge" alt="Platforms">
     <img src="https://img.shields.io/badge/python-3.11+-yellow?style=for-the-badge" alt="Python">

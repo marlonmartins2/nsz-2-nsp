@@ -8,8 +8,13 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+  contents: write
+
 jobs:
   build-windows:
+    permissions:
+      contents: write
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -76,7 +81,7 @@ jobs:
           path: linux-build
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             NSZ-Converter-Windows.zip
