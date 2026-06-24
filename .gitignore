@@ -23,3 +23,8 @@ venv.bak/
 .idea/
 .vscode/
 *.swp
+
+# Chaves e segredos
+keys/
+encrypt_keys.py
+

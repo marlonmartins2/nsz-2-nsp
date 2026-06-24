@@ -14,7 +14,7 @@ echo "Construindo binário com PyInstaller..."
 # Adicionamos pyinstaller local ao PATH
 export PATH=$PATH:$HOME/.local/bin
 python3 -m PyInstaller --noconfirm --onedir --windowed --name "NSZ-Converter" \
-    --add-data "$CTK_PATH:customtkinter/" --add-binary "$NSZ_PATH:." app.py
+    --add-data "$CTK_PATH:customtkinter/" --add-data "assets/:assets/" --add-binary "$NSZ_PATH:." app.py
 
 echo "Baixando appimagetool..."
 wget -qO appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"

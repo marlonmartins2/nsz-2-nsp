@@ -12,7 +12,34 @@ def get_nsz_executable():
     if getattr(sys, 'frozen', False):
         # In a PyInstaller bundle
         return os.path.join(sys._MEIPASS, 'nsz.exe' if os.name == 'nt' else 'nsz')
-    return 'nsz' # Using nsz from system PATH during development
+    return shutil.which('nsz') or 'nsz' # Using nsz from system PATH during development
+
+def extract_keys():
+    import base64
+    import tempfile
+    
+    enc_path = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), 'assets', 'keys.enc')
+    if not os.path.exists(enc_path):
+        return None
+        
+    with open(enc_path, "rb") as f:
+        data = f.read()
+        
+    encrypted = base64.b64decode(data)
+    xor_key = b"nsz-converter-secret-key-123"
+    decrypted = bytearray()
+    for i in range(len(encrypted)):
+        decrypted.append(encrypted[i] ^ xor_key[i % len(xor_key)])
+        
+    temp_dir = tempfile.mkdtemp()
+    keys_dir = os.path.join(temp_dir, '.switch')
+    os.makedirs(keys_dir, exist_ok=True)
+    
+    keys_path = os.path.join(keys_dir, 'prod.keys')
+    with open(keys_path, "wb") as f:
+        f.write(decrypted)
+        
+    return temp_dir
 
 def convert_nsz_to_nsp(input_file, output_dir, progress_callback, completion_callback, error_callback):
     """
@@ -32,12 +59,19 @@ def convert_nsz_to_nsp(input_file, output_dir, progress_callback, completion_cal
                 sys.executable, "-m", "nsz", "-D", input_file, "-o", output_dir
             ] if not getattr(sys, 'frozen', False) else [get_nsz_executable(), "-D", input_file, "-o", output_dir]
             
+            temp_keys_dir = extract_keys()
+            env = os.environ.copy()
+            if temp_keys_dir:
+                env['USERPROFILE'] = temp_keys_dir
+                env['HOME'] = temp_keys_dir
+            
             # Start process
             process = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
+                env=env,
                 creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
             )
 
@@ -53,8 +87,15 @@ def convert_nsz_to_nsp(input_file, output_dir, progress_callback, completion_cal
                         progress_callback(f"Processando... (Veja os logs no terminal se houver erro)")
             
             return_code = process.poll()
+            process.wait()
+
+            if temp_keys_dir:
+                try:
+                    shutil.rmtree(temp_keys_dir)
+                except:
+                    pass
             
-            if return_code == 0:
+            if process.returncode == 0:
                 progress_callback("Conversão finalizada com sucesso!")
                 completion_callback()
             else:
