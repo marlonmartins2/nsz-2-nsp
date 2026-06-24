@@ -12,7 +12,7 @@ CTK_PATH=$(python3 -c "import customtkinter, os; print(os.path.dirname(customtki
 echo "Construindo binário com PyInstaller..."
 # Adicionamos pyinstaller local ao PATH
 export PATH=$PATH:$HOME/.local/bin
-python3 -m PyInstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --icon=icon.ico --hidden-import nsz --hidden-import nsz.__main__ \
+python3 -m PyInstaller --noconfirm --onedir --windowed --name "nsz-2-nsp" --icon=icon.ico --hidden-import nsz \
     --add-data "$CTK_PATH:customtkinter/" app.py
 
 echo "Baixando appimagetool..."

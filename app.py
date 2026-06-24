@@ -2,12 +2,12 @@ import sys
 # Interceptador para rodar o NSZ nativamente no mesmo executável empacotado
 if len(sys.argv) > 1 and ("NSZ_RUNNER_MODE" in sys.argv or any("multiprocessing-fork" in arg for arg in sys.argv)):
     import multiprocessing
-    import nsz.__main__
+    import nsz
     multiprocessing.freeze_support()
     
     if "NSZ_RUNNER_MODE" in sys.argv:
         sys.argv.remove("NSZ_RUNNER_MODE")
-        sys.exit(nsz.__main__.main())
+        sys.exit(nsz.main())
 
 import customtkinter as ctk
 from tkinter import filedialog
